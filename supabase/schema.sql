@@ -102,3 +102,8 @@ begin
   return found;
 end;
 $$;
+
+-- ---------- Reposts ----------
+-- A post can point to an earlier post it's reposting. If that post is deleted, the link is cleared.
+alter table posts add column if not exists repost_of bigint references posts (id) on delete set null;
+grant select (repost_of) on posts to anon, authenticated;

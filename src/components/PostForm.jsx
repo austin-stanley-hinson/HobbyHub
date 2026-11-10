@@ -1,6 +1,6 @@
 // The title, content, and image URL fields, shared by the create and edit pages.
-// The create page also asks for a secret key (askForSecretKey).
-function PostForm({ post, setPost, onSubmit, submitLabel, isSaving, askForSecretKey = false }) {
+// New posts also get a secret key and an optional post ID to repost (isNewPost).
+function PostForm({ post, setPost, onSubmit, submitLabel, isSaving, isNewPost = false, repostPreview = null }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setPost((current) => ({ ...current, [name]: value }));
@@ -12,7 +12,7 @@ function PostForm({ post, setPost, onSubmit, submitLabel, isSaving, askForSecret
   };
 
   // A post needs a title (and a secret key when creating); content and image are optional
-  const hasSecretKey = !askForSecretKey || post.secret_key.trim() !== "";
+  const hasSecretKey = !isNewPost || post.secret_key.trim() !== "";
   const canSubmit = post.title.trim() !== "" && hasSecretKey && !isSaving;
 
   return (
@@ -48,8 +48,20 @@ function PostForm({ post, setPost, onSubmit, submitLabel, isSaving, askForSecret
         onChange={handleChange}
       />
 
-      {askForSecretKey && (
+      {isNewPost && (
         <>
+          <label htmlFor="repost_of">Repost a post (optional)</label>
+          <input
+            id="repost_of"
+            name="repost_of"
+            type="text"
+            inputMode="numeric"
+            placeholder="Post ID, e.g. 12"
+            value={post.repost_of}
+            onChange={handleChange}
+          />
+          {repostPreview}
+
           <label htmlFor="secret_key">Secret key</label>
           <input
             id="secret_key"

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../client';
 import { timeAgo } from '../timeAgo';
 import Comments from '../components/Comments';
+import { RepostedPost, RepostList } from '../components/RepostThread';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 function PostDetail() {
@@ -58,7 +59,7 @@ function PostDetail() {
 
       const { data, error } = await supabase
         .from("posts")
-        .select("id, created_at, title, content, image_url, upvotes")
+        .select("id, created_at, title, content, image_url, upvotes, repost_of")
         .eq("id", id)
         .maybeSingle();
 
@@ -154,6 +155,8 @@ function PostDetail() {
         </p>
         <h1 className="post-title">{post.title}</h1>
 
+        {post.repost_of && <RepostedPost postId={post.repost_of} />}
+
         {post.content && <p className="post-content">{post.content}</p>}
 
         {post.image_url && !imageFailed && (
@@ -176,6 +179,7 @@ function PostDetail() {
         {upvoteError && <p className="error">{upvoteError}</p>}
 
         <div className="post-actions">
+          <Link to={`/create?repost=${post.id}`} className="edit-button">&#8635; Repost</Link>
           <Link to={`/edit/${post.id}`} className="edit-button">Edit Post</Link>
           {!isConfirmingDelete && (
             <button
@@ -216,6 +220,8 @@ function PostDetail() {
             {deleteError && <p className="error">{deleteError}</p>}
           </form>
         )}
+
+        <RepostList postId={post.id} />
       </article>
 
       <Comments postId={post.id} />
