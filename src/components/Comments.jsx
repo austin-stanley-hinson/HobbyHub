@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../client';
 import { timeAgo } from '../timeAgo';
+import LoadingSpinner from './LoadingSpinner';
 
 // The comments under a post, oldest first, and a form to add one
 function Comments({ postId }) {
@@ -81,7 +82,7 @@ function Comments({ postId }) {
     <section className="comments">
       <h2>Comments ({comments.length})</h2>
 
-      {isLoading && <p>Loading comments...</p>}
+      {isLoading && <LoadingSpinner label="Loading comments..." />}
       {loadError && <p className="error">{loadError}</p>}
 
       {!isLoading && !loadError && comments.length === 0 && (

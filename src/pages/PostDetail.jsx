@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../client';
 import { timeAgo } from '../timeAgo';
 import Comments from '../components/Comments';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function PostDetail() {
   const { id } = useParams();
@@ -106,7 +107,7 @@ function PostDetail() {
   };
 
   if (isLoading) {
-    return <div className="page"><p>Loading post...</p></div>;
+    return <div className="page"><LoadingSpinner label="Loading post..." /></div>;
   }
 
   if (error) {

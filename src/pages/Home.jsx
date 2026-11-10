@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../client';
 import PostCard from '../components/PostCard';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // The ways the feed can be ordered
 const SORT_OPTIONS = [
@@ -96,7 +97,7 @@ function Home() {
         ))}
       </div>
 
-      {isLoading && <p>Loading posts...</p>}
+      {isLoading && <LoadingSpinner label="Loading posts..." />}
       {error && <p className="error">{error}</p>}
 
       {!isLoading && !error && posts.length === 0 && (

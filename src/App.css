@@ -470,3 +470,70 @@
     font-size: 1.6rem;
   }
 }
+
+/* ---------- Loading animation ---------- */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
+}
+
+.loading-label {
+  margin: 0;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* A basketball drawn with CSS: an orange ball with a cross seam and two curved seams */
+.basketball {
+  --seam: #2b1405;
+  position: relative;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    linear-gradient(transparent 47%, var(--seam) 47%, var(--seam) 53%, transparent 53%),
+    linear-gradient(90deg, transparent 47%, var(--seam) 47%, var(--seam) 53%, transparent 53%),
+    radial-gradient(circle at 35% 30%, #f9a65a 0%, #e8711f 55%, #b8520f 100%);
+  box-shadow: inset -4px -6px 10px rgba(0, 0, 0, 0.25), 0 6px 14px rgba(11, 31, 69, 0.2);
+  animation: spin-ball 1s linear infinite;
+}
+
+/* The two curved side seams, one bending in from each edge */
+.basketball::before,
+.basketball::after {
+  content: "";
+  position: absolute;
+  top: -10%;
+  width: 70%;
+  height: 120%;
+  border: 3px solid transparent;
+  border-radius: 50%;
+}
+
+.basketball::before {
+  left: -42%;
+  border-right-color: var(--seam);
+}
+
+.basketball::after {
+  right: -42%;
+  border-left-color: var(--seam);
+}
+
+@keyframes spin-ball {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Slow the spin down for people who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .basketball {
+    animation-duration: 3s;
+  }
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../client';
 import PostForm from '../components/PostForm';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function EditPost() {
   const { id } = useParams();
@@ -84,7 +85,7 @@ function EditPost() {
   };
 
   if (isLoading) {
-    return <div className="page"><p>Loading post...</p></div>;
+    return <div className="page"><LoadingSpinner label="Loading post..." /></div>;
   }
 
   if (loadError) {
