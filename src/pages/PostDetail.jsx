@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { supabase } from '../client';
 import { timeAgo } from '../timeAgo';
+import Comments from '../components/Comments';
 
 function PostDetail() {
   const { id } = useParams();
@@ -124,6 +125,8 @@ function PostDetail() {
         </div>
         {upvoteError && <p className="error">{upvoteError}</p>}
       </article>
+
+      <Comments postId={post.id} />
     </div>
   );
 }

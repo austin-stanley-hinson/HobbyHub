@@ -155,3 +155,66 @@
 .upvote-row .post-upvotes {
   color: #666;
 }
+
+/* ---------- Comments ---------- */
+
+.comments {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.comments h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+.comments-empty {
+  color: #666;
+}
+
+.comment-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comment {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.comment-content {
+  margin: 0 0 0.25rem;
+  white-space: pre-wrap;
+}
+
+.comment-time {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.comment-form label {
+  font-weight: 600;
+}
+
+.comment-form textarea {
+  padding: 0.6rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.comment-form .primary-button {
+  margin-top: 0;
+}
