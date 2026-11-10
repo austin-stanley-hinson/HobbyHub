@@ -24,6 +24,12 @@ function PostDetail() {
   // Message to show if an upvote didn't save ("" = no error)
   const [upvoteError, setUpvoteError] = useState("");
 
+  // Is the "enter your secret key to delete" box open?
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+
+  // The secret key typed into the delete box
+  const [deleteKey, setDeleteKey] = useState("");
+
   // Is the post being deleted right now?
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -40,6 +46,8 @@ function PostDetail() {
       setImageFailed(false);
       setUpvoteError("");
       setDeleteError("");
+      setIsConfirmingDelete(false);
+      setDeleteKey("");
 
       // Post IDs are whole numbers, so anything else can't be a post
       if (!/^\d+$/.test(id)) {
@@ -50,7 +58,7 @@ function PostDetail() {
 
       const { data, error } = await supabase
         .from("posts")
-        .select("*")
+        .select("id, created_at, title, content, image_url, upvotes")
         .eq("id", id)
         .maybeSingle();
 
@@ -86,20 +94,33 @@ function PostDetail() {
     }
   };
 
-  const deletePost = async () => {
-    if (!window.confirm("Delete this post and all of its comments? This can't be undone.")) {
-      return;
-    }
+  const closeDeleteBox = () => {
+    setIsConfirmingDelete(false);
+    setDeleteKey("");
+    setDeleteError("");
+  };
 
+  const deletePost = async (event) => {
+    event.preventDefault();
     setIsDeleting(true);
     setDeleteError("");
 
-    // Deleting a post also deletes its comments (set up in the database)
-    const { error } = await supabase.from("posts").delete().eq("id", post.id);
+    // The database only deletes the post if the key matches.
+    // Deleting a post also deletes its comments.
+    const { data: deleted, error } = await supabase.rpc("delete_post", {
+      post_id: post.id,
+      key: deleteKey,
+    });
+
+    setIsDeleting(false);
 
     if (error) {
-      setIsDeleting(false);
       setDeleteError("Couldn't delete the post. Please try again.");
+      return;
+    }
+
+    if (!deleted) {
+      setDeleteError("That secret key doesn't match this post.");
       return;
     }
 
@@ -156,16 +177,45 @@ function PostDetail() {
 
         <div className="post-actions">
           <Link to={`/edit/${post.id}`} className="edit-button">Edit Post</Link>
-          <button
-            type="button"
-            className="delete-button"
-            onClick={deletePost}
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Deleting..." : "Delete Post"}
-          </button>
+          {!isConfirmingDelete && (
+            <button
+              type="button"
+              className="delete-button"
+              onClick={() => setIsConfirmingDelete(true)}
+            >
+              Delete Post
+            </button>
+          )}
         </div>
-        {deleteError && <p className="error">{deleteError}</p>}
+
+        {isConfirmingDelete && (
+          <form className="key-box delete-box" onSubmit={deletePost}>
+            <label htmlFor="delete-key">
+              Enter this post's secret key to delete it and all of its comments. This can't be undone.
+            </label>
+            <input
+              id="delete-key"
+              type="password"
+              autoComplete="off"
+              value={deleteKey}
+              onChange={(event) => setDeleteKey(event.target.value)}
+              autoFocus
+            />
+            <div className="key-box-buttons">
+              <button
+                type="submit"
+                className="delete-button"
+                disabled={deleteKey === "" || isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete Forever"}
+              </button>
+              <button type="button" className="link-button" onClick={closeDeleteBox}>
+                Cancel
+              </button>
+            </div>
+            {deleteError && <p className="error">{deleteError}</p>}
+          </form>
+        )}
       </article>
 
       <Comments postId={post.id} />

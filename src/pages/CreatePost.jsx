@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../client';
 import PostForm from '../components/PostForm';
 
-const EMPTY_POST = { title: "", content: "", image_url: "" };
+const EMPTY_POST = { title: "", content: "", image_url: "", secret_key: "" };
 
 function CreatePost() {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ function CreatePost() {
       title: post.title.trim(),
       content: post.content.trim() || null,
       image_url: post.image_url.trim() || null,
+      secret_key: post.secret_key.trim(),
     });
 
     setIsSaving(false);
@@ -48,6 +49,7 @@ function CreatePost() {
         onSubmit={createPost}
         submitLabel="Create Post"
         isSaving={isSaving}
+        askForSecretKey
       />
       {error && <p className="error">{error}</p>}
     </div>

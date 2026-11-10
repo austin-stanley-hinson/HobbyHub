@@ -38,3 +38,67 @@ language sql
 as $$
   update posts set upvotes = upvotes + 1 where id = row_id returning upvotes;
 $$;
+
+-- ---------- Secret key (pseudo-authentication) ----------
+-- Each post gets a secret key when it's created. Only someone with the key can edit or delete it.
+
+alter table posts add column if not exists secret_key text;
+
+-- Hide the key from the API: anyone can read every column except secret_key
+revoke select on posts from anon, authenticated;
+grant select (id, created_at, title, content, image_url, upvotes) on posts to anon, authenticated;
+
+-- No direct edits or deletes; they go through the key-checking functions below
+drop policy if exists "Anyone can update posts" on posts;
+drop policy if exists "Anyone can delete posts" on posts;
+
+-- Upvoting still works for everyone, so it runs with the table owner's rights
+create or replace function increment_upvotes(row_id bigint)
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  update posts set upvotes = upvotes + 1 where id = row_id returning upvotes;
+$$;
+
+-- True if the key matches the post (used to unlock the edit form)
+create or replace function check_post_key(post_id bigint, key text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from posts where id = post_id and secret_key = key);
+$$;
+
+-- Saves the changes and returns true only if the key matches
+create or replace function update_post(
+  post_id bigint, key text, new_title text, new_content text, new_image_url text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update posts
+    set title = new_title, content = new_content, image_url = new_image_url
+    where id = post_id and secret_key = key;
+  return found;
+end;
+$$;
+
+-- Deletes the post (and its comments) and returns true only if the key matches
+create or replace function delete_post(post_id bigint, key text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  delete from posts where id = post_id and secret_key = key;
+  return found;
+end;
+$$;

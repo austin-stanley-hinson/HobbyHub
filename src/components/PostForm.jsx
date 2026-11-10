@@ -1,5 +1,6 @@
-// The title, content, and image URL fields, shared by the create and edit pages
-function PostForm({ post, setPost, onSubmit, submitLabel, isSaving }) {
+// The title, content, and image URL fields, shared by the create and edit pages.
+// The create page also asks for a secret key (askForSecretKey).
+function PostForm({ post, setPost, onSubmit, submitLabel, isSaving, askForSecretKey = false }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setPost((current) => ({ ...current, [name]: value }));
@@ -10,8 +11,9 @@ function PostForm({ post, setPost, onSubmit, submitLabel, isSaving }) {
     onSubmit();
   };
 
-  // A post needs a title; content and image are optional
-  const canSubmit = post.title.trim() !== "" && !isSaving;
+  // A post needs a title (and a secret key when creating); content and image are optional
+  const hasSecretKey = !askForSecretKey || post.secret_key.trim() !== "";
+  const canSubmit = post.title.trim() !== "" && hasSecretKey && !isSaving;
 
   return (
     <form className="post-form" onSubmit={handleSubmit}>
@@ -45,6 +47,25 @@ function PostForm({ post, setPost, onSubmit, submitLabel, isSaving }) {
         value={post.image_url}
         onChange={handleChange}
       />
+
+      {askForSecretKey && (
+        <>
+          <label htmlFor="secret_key">Secret key</label>
+          <input
+            id="secret_key"
+            name="secret_key"
+            type="password"
+            autoComplete="off"
+            placeholder="Something only you know"
+            value={post.secret_key}
+            onChange={handleChange}
+            required
+          />
+          <p className="field-hint">
+            You'll need this key to edit or delete your post. Don't reuse a real password.
+          </p>
+        </>
+      )}
 
       <button type="submit" className="primary-button" disabled={!canSubmit}>
         {isSaving ? "Saving..." : submitLabel}

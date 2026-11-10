@@ -17,6 +17,12 @@ function EditPost() {
   // Message to show if fetching failed ("" = no error)
   const [loadError, setLoadError] = useState("");
 
+  // The secret key the user typed, and whether it matched
+  const [secretKey, setSecretKey] = useState("");
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isCheckingKey, setIsCheckingKey] = useState(false);
+  const [keyError, setKeyError] = useState("");
+
   // Are the changes being saved right now?
   const [isSaving, setIsSaving] = useState(false);
 
@@ -53,20 +59,40 @@ function EditPost() {
     fetchPost();
   }, [id]);
 
+  // Check the key before showing the form
+  const checkKey = async (event) => {
+    event.preventDefault();
+    setIsCheckingKey(true);
+    setKeyError("");
+
+    const { data: matches, error } = await supabase.rpc("check_post_key", {
+      post_id: Number(id),
+      key: secretKey,
+    });
+
+    setIsCheckingKey(false);
+
+    if (error) {
+      setKeyError("Couldn't check the key. Please try again.");
+    } else if (!matches) {
+      setKeyError("That secret key doesn't match this post.");
+    } else {
+      setIsUnlocked(true);
+    }
+  };
+
   const updatePost = async () => {
     setIsSaving(true);
     setSaveError("");
 
-    // Get the row back to make sure the post still exists
-    const { data, error } = await supabase
-      .from("posts")
-      .update({
-        title: post.title.trim(),
-        content: post.content.trim() || null,
-        image_url: post.image_url.trim() || null,
-      })
-      .eq("id", id)
-      .select("id");
+    // The database checks the key again before saving
+    const { data: updated, error } = await supabase.rpc("update_post", {
+      post_id: Number(id),
+      key: secretKey,
+      new_title: post.title.trim(),
+      new_content: post.content.trim() || null,
+      new_image_url: post.image_url.trim() || null,
+    });
 
     setIsSaving(false);
 
@@ -75,7 +101,7 @@ function EditPost() {
       return;
     }
 
-    if (data.length === 0) {
+    if (!updated) {
       setSaveError("This post has been deleted, so it can't be edited.");
       return;
     }
@@ -105,14 +131,43 @@ function EditPost() {
     <div className="page">
       <Link to={`/post/${id}`} className="back-link">&larr; Back to the post</Link>
       <h1>Edit Post</h1>
-      <PostForm
-        post={post}
-        setPost={setPost}
-        onSubmit={updatePost}
-        submitLabel="Save Changes"
-        isSaving={isSaving}
-      />
-      {saveError && <p className="error">{saveError}</p>}
+
+      {!isUnlocked ? (
+        <form className="key-box" onSubmit={checkKey}>
+          <label htmlFor="edit-key">
+            Enter the secret key you set when you created "{post.title}".
+          </label>
+          <input
+            id="edit-key"
+            type="password"
+            autoComplete="off"
+            value={secretKey}
+            onChange={(event) => setSecretKey(event.target.value)}
+            autoFocus
+          />
+          <div className="key-box-buttons">
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={secretKey === "" || isCheckingKey}
+            >
+              {isCheckingKey ? "Checking..." : "Unlock"}
+            </button>
+          </div>
+          {keyError && <p className="error">{keyError}</p>}
+        </form>
+      ) : (
+        <>
+          <PostForm
+            post={post}
+            setPost={setPost}
+            onSubmit={updatePost}
+            submitLabel="Save Changes"
+            isSaving={isSaving}
+          />
+          {saveError && <p className="error">{saveError}</p>}
+        </>
+      )}
     </div>
   );
 }

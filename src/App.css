@@ -537,3 +537,62 @@
     animation-duration: 3s;
   }
 }
+
+/* ---------- Secret key ---------- */
+
+.field-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* The "enter your secret key" box on the edit page and under Delete Post */
+.key-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--navy);
+  border-radius: 10px;
+}
+
+.key-box label {
+  font-weight: 600;
+  color: var(--navy-dark);
+}
+
+.key-box input {
+  box-sizing: border-box;
+  padding: 0.65rem 0.8rem;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.key-box input:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(29, 66, 138, 0.2);
+}
+
+.key-box-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.key-box-buttons .primary-button {
+  margin-top: 0;
+}
+
+.key-box .error {
+  margin: 0;
+}
+
+.delete-box {
+  margin-top: 1rem;
+  border-top-color: var(--red);
+  background: #fff6f7;
+}
