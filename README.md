@@ -4,7 +4,7 @@ Submitted by: **Austin Stanley Hinson**
 
 This web app: **A basketball forum styled like a pro basketball broadcast, where fans share takes, upvote the ones they like, and argue about them in the comments. Posts are saved in a Supabase database. The home feed shows each post's time, title, and upvotes, and can be sorted by newest or most upvoted and searched by title. Each post has its own page with its content, image, upvote button, and comments. Posts are protected by a secret key set when posting, so only the author can edit or delete them, and any post can be reposted to start a thread.**
 
-Time spent: **0** hours spent in total
+Time spent: **10** hours spent in total
 
 ## Required Features
 
@@ -74,8 +74,10 @@ Here's a walkthrough of implemented user stories:
 
 <img src='walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
+[▶️ Also on Imgur](https://imgur.com/a/Ido7uuE)
+
 <!-- Replace this with whatever GIF tool you used! -->
-GIF created with ...  
+GIF created with the macOS Screenshot tool (Cmd+Shift+5) and converted to a GIF  
 <!-- Recommended tools:
 [Kap](https://getkap.co/) for macOS
 [ScreenToGif](https://www.screentogif.com/) for Windows
