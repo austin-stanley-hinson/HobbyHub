@@ -1,3 +1,71 @@
+/* ---------- Layout ---------- */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar a.active {
+  font-weight: 600;
+}
+
+.navbar .navbar-title {
+  margin-right: auto;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
 .content {
   padding: 2rem;
+}
+
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ---------- Forms ---------- */
+
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.post-form input,
+.post-form textarea {
+  padding: 0.6rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.post-form label {
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+.primary-button {
+  align-self: flex-start;
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error {
+  color: #c62828;
 }
