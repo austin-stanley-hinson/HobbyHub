@@ -120,8 +120,7 @@
   margin: 0.25rem 0 1rem;
 }
 
-.post-detail .post-time,
-.post-detail .post-upvotes {
+.post-detail .post-time {
   margin: 0;
   color: #666;
 }
@@ -138,4 +137,21 @@
   max-height: 500px;
   margin: 1rem 0;
   border-radius: 8px;
+}
+
+.upvote-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.upvote-button {
+  padding: 0.4rem 0.9rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.upvote-row .post-upvotes {
+  color: #666;
 }

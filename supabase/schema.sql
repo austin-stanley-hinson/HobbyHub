@@ -29,3 +29,12 @@ create policy "Anyone can delete posts" on posts for delete using (true);
 create policy "Anyone can read comments" on comments for select using (true);
 create policy "Anyone can add comments" on comments for insert with check (true);
 create policy "Anyone can delete comments" on comments for delete using (true);
+
+-- Add one upvote inside the database, so two people clicking at the same time
+-- can't overwrite each other's upvote. Returns the new upvote count.
+create or replace function increment_upvotes(row_id bigint)
+returns integer
+language sql
+as $$
+  update posts set upvotes = upvotes + 1 where id = row_id returning upvotes;
+$$;
