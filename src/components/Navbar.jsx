@@ -5,6 +5,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <NavLink to="/" end className="navbar-title">
+        <span className="navbar-ball" aria-hidden="true">&#127936;</span>
         HobbyHub
       </NavLink>
       <NavLink to="/" end>Home</NavLink>

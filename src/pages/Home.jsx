@@ -67,7 +67,10 @@ function Home() {
 
   return (
     <div className="page">
-      <h1>HobbyHub</h1>
+      <header className="hero">
+        <h1>HobbyHub</h1>
+        <p>The court is open. Talk hoops, settle debates, and share your takes.</p>
+      </header>
 
       <input
         type="search"

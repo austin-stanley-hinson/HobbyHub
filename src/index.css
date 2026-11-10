@@ -1,9 +1,44 @@
+/* Colors inspired by pro basketball broadcasts: navy, red, and white */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --navy: #1d428a;
+  --navy-dark: #0b1f45;
+  --red: #c8102e;
+  --red-dark: #a00d25;
+  --bg: #f2f4f8;
+  --surface: #ffffff;
+  --border: #dbe1ea;
+  --text: #0f1a2e;
+  --muted: #5b6579;
+  --on-dark: #ffffff;
+
+  --font-heading: "Oswald", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+
+  font-family: var(--font-body);
   line-height: 1.5;
+  color: var(--text);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  background: var(--bg);
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--navy-dark);
+}
+
+a {
+  color: var(--navy);
+}
+
+:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
 }

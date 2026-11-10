@@ -5,10 +5,14 @@ import { timeAgo } from '../timeAgo';
 function PostCard({ post }) {
   return (
     <Link to={`/post/${post.id}`} className="post-card">
-      <p className="post-time">Posted {timeAgo(post.created_at)}</p>
-      <h2 className="post-title">{post.title}</h2>
+      <div className="post-card-body">
+        <p className="post-time">Posted {timeAgo(post.created_at)}</p>
+        <h2 className="post-title">{post.title}</h2>
+      </div>
+      {/* Shown like a score on a scoreboard */}
       <p className="post-upvotes">
-        {post.upvotes} {post.upvotes === 1 ? "upvote" : "upvotes"}
+        <span className="post-upvotes-count">{post.upvotes}</span>
+        <span className="post-upvotes-label">{post.upvotes === 1 ? "upvote" : "upvotes"}</span>
       </p>
     </Link>
   );
