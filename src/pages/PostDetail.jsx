@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../client';
 import { timeAgo } from '../timeAgo';
 import Comments from '../components/Comments';
 
 function PostDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // The post being shown (null = not loaded yet, or doesn't exist)
   const [post, setPost] = useState(null);
@@ -22,6 +23,12 @@ function PostDetail() {
   // Message to show if an upvote didn't save ("" = no error)
   const [upvoteError, setUpvoteError] = useState("");
 
+  // Is the post being deleted right now?
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Message to show if deleting failed ("" = no error)
+  const [deleteError, setDeleteError] = useState("");
+
   useEffect(() => {
     // Ignore the answer if the user moves to another post before it arrives
     let isCurrent = true;
@@ -31,6 +38,7 @@ function PostDetail() {
       setError("");
       setImageFailed(false);
       setUpvoteError("");
+      setDeleteError("");
 
       // Post IDs are whole numbers, so anything else can't be a post
       if (!/^\d+$/.test(id)) {
@@ -75,6 +83,26 @@ function PostDetail() {
       setPost((current) => ({ ...current, upvotes: current.upvotes - 1 }));
       setUpvoteError("Couldn't save your upvote. Please try again.");
     }
+  };
+
+  const deletePost = async () => {
+    if (!window.confirm("Delete this post and all of its comments? This can't be undone.")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setDeleteError("");
+
+    // Deleting a post also deletes its comments (set up in the database)
+    const { error } = await supabase.from("posts").delete().eq("id", post.id);
+
+    if (error) {
+      setIsDeleting(false);
+      setDeleteError("Couldn't delete the post. Please try again.");
+      return;
+    }
+
+    navigate("/");
   };
 
   if (isLoading) {
@@ -124,6 +152,19 @@ function PostDetail() {
           </span>
         </div>
         {upvoteError && <p className="error">{upvoteError}</p>}
+
+        <div className="post-actions">
+          <Link to={`/edit/${post.id}`} className="edit-button">Edit Post</Link>
+          <button
+            type="button"
+            className="delete-button"
+            onClick={deletePost}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete Post"}
+          </button>
+        </div>
+        {deleteError && <p className="error">{deleteError}</p>}
       </article>
 
       <Comments postId={post.id} />
