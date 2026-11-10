@@ -9,6 +9,13 @@ const SORT_OPTIONS = [
   { value: "upvotes", label: "Most Upvoted" },
 ];
 
+// Keep only posts whose title contains the search text, ignoring capitals
+function searchPosts(posts, searchText) {
+  const query = searchText.trim().toLowerCase();
+  if (query === "") return posts;
+  return posts.filter((post) => post.title.toLowerCase().includes(query));
+}
+
 // Put posts in order without changing the original list
 function sortPosts(posts, sortBy) {
   const sorted = [...posts];
@@ -27,6 +34,9 @@ function Home() {
 
   // How the feed is ordered: "newest" or "upvotes"
   const [sortBy, setSortBy] = useState("newest");
+
+  // What the user has typed in the search box
+  const [searchText, setSearchText] = useState("");
 
   // Are the posts still being fetched?
   const [isLoading, setIsLoading] = useState(true);
@@ -53,11 +63,20 @@ function Home() {
     fetchPosts();
   }, []);
 
-  const visiblePosts = sortPosts(posts, sortBy);
+  const visiblePosts = sortPosts(searchPosts(posts, searchText), sortBy);
 
   return (
     <div className="page">
       <h1>HobbyHub</h1>
+
+      <input
+        type="search"
+        className="search-input"
+        placeholder="Search posts by title..."
+        aria-label="Search posts by title"
+        value={searchText}
+        onChange={(event) => setSearchText(event.target.value)}
+      />
 
       <div className="feed-controls">
         <span className="feed-controls-label">Order by:</span>
@@ -80,6 +99,15 @@ function Home() {
       {!isLoading && !error && posts.length === 0 && (
         <p>
           No posts yet. <Link to="/create">Start the first conversation!</Link>
+        </p>
+      )}
+
+      {posts.length > 0 && visiblePosts.length === 0 && (
+        <p>
+          No posts match "{searchText.trim()}".{" "}
+          <button type="button" className="link-button" onClick={() => setSearchText("")}>
+            Clear search
+          </button>
         </p>
       )}
 

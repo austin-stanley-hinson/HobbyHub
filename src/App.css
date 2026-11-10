@@ -279,3 +279,24 @@
   border-color: currentColor;
   font-weight: 600;
 }
+
+.search-input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* A button that looks like a link */
+.link-button {
+  padding: 0;
+  font: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
