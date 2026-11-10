@@ -3,9 +3,30 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../client';
 import PostCard from '../components/PostCard';
 
+// The ways the feed can be ordered
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest" },
+  { value: "upvotes", label: "Most Upvoted" },
+];
+
+// Put posts in order without changing the original list
+function sortPosts(posts, sortBy) {
+  const sorted = [...posts];
+  if (sortBy === "upvotes") {
+    // Most upvotes first; posts with the same count stay newest first
+    sorted.sort((a, b) => b.upvotes - a.upvotes || new Date(b.created_at) - new Date(a.created_at));
+  } else {
+    sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }
+  return sorted;
+}
+
 function Home() {
-  // Every post, newest first
+  // Every post, as fetched
   const [posts, setPosts] = useState([]);
+
+  // How the feed is ordered: "newest" or "upvotes"
+  const [sortBy, setSortBy] = useState("newest");
 
   // Are the posts still being fetched?
   const [isLoading, setIsLoading] = useState(true);
@@ -32,9 +53,26 @@ function Home() {
     fetchPosts();
   }, []);
 
+  const visiblePosts = sortPosts(posts, sortBy);
+
   return (
     <div className="page">
       <h1>HobbyHub</h1>
+
+      <div className="feed-controls">
+        <span className="feed-controls-label">Order by:</span>
+        {SORT_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            className={`sort-button${sortBy === option.value ? " active" : ""}`}
+            aria-pressed={sortBy === option.value}
+            onClick={() => setSortBy(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
 
       {isLoading && <p>Loading posts...</p>}
       {error && <p className="error">{error}</p>}
@@ -46,7 +84,7 @@ function Home() {
       )}
 
       <div className="post-feed">
-        {posts.map((post) => (
+        {visiblePosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>

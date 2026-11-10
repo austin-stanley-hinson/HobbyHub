@@ -249,3 +249,33 @@
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+/* ---------- Feed controls ---------- */
+
+.feed-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.feed-controls-label {
+  color: #666;
+}
+
+.sort-button {
+  padding: 0.35rem 0.85rem;
+  font: inherit;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sort-button.active {
+  border-color: currentColor;
+  font-weight: 600;
+}
